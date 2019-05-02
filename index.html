@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Carousel</title>
+    <style media="screen">
+      ul { margin: 0; padding: 0; }
+      li { list-style-type: none; }
+      .carousel{
+        position: relative;
+        margin: auto;
+        overflow: hidden;
+        width: min-content;
+      }
+      .carousel__button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 9;
+        border: none;
+        background: transparent;
+        color: white;
+        font-size: 4em;
+        border-radius: 1em;
+        line-height: 4;
+        transition: all 200ms ease-in-out;
+      }
+      .carousel__button:focus,
+      .carousel__button:hover {
+        outline: none;
+        background: rgba(255,255,255,0.5);
+      }
+      .carousel__button--prev {
+        left: 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        border-radius: 0 12px 12px 0;
+      }
+      .carousel__button--next {
+        right: 0;
+        text-shadow: -2px 2px 4px rgba(0,0,0,0.5);
+        border-radius: 12px 0 0 12px;
+      }
+      .carousel__slider {
+        left: 0;
+        position: relative;
+        transition: left 400ms ease-in-out;
+      }
+      .slider__slide{
+        float: left;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+
+      let current = 0; // set current slide to 0, the first one
+      let slides = []; // stage slides array for cross functional use
+
+      // Slide Action
+      const doSlide = (place) => {
+          if (current < 0) {
+            current = slides.length - 1;
+          } else if (current >= slides.length) {
+            current = 0;
+          }
+          slider.style.left = -(current * 100) + '%';
+      }
+
+      // Simulate input data from external source
+      const slidesData = [
+        {
+          imgUrl: 'http://lorempixel.com/640/480/abstract/1',
+          alt: 'alternative image text',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'http://lorempixel.com/640/480/abstract/2',
+          alt: 'alternative image text',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'http://lorempixel.com/640/480/abstract/3',
+          alt: 'alternative image text',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'http://lorempixel.com/640/480/abstract/4',
+          alt: 'alternative image text',
+          width: 640,
+          height: 480,
+        },
+      ];
+
+      const load = () => {
+
+        // Build the control buttons (next)
+        const nextButton = document.createElement('button');
+          nextButton.classList.add('carousel__button','carousel__button--next');
+          nextButton.setAttribute('id','next');
+
+          nextButton.innerHTML = '>';
+          nextButton.addEventListener('click', function(e) {
+            current++;
+            doSlide(current);
+          });
+
+        // Build the control buttons (prev)
+        const prevButton = document.createElement('button');
+          prevButton.classList.add('carousel__button','carousel__button--prev');
+          prevButton.setAttribute('id','prev');
+
+          prevButton.innerHTML = '<';
+          prevButton.addEventListener('click', function(e) {
+            current--;
+            doSlide(current);
+          });
+
+        // Build carousel slides wrapper element
+        const carousel = document.createElement('div');
+          carousel.classList.add('carousel');
+          carousel.setAttribute('id','carousel');
+
+        // Build carousel slides wrapper element
+        const slider = document.createElement('ul');
+          slider.classList.add('carousel__slider');
+          slider.setAttribute('id','slider');
+
+        // Build the slides
+        for (let i = 0; i < slidesData.length; i++) {
+
+          const slide = document.createElement('li');
+            slide.classList.add('slider__slide');
+            slide.setAttribute('id','slide-'+i);
+
+          const img = document.createElement('img');
+            img.classList.add('slide__img');
+            img.setAttribute('id','slide-'+i);
+            img.setAttribute('src',slidesData[i].imgUrl);
+
+          slides.push(slide);
+
+          slide.append(img);
+
+          slider.append(slide);
+
+          carousel.append(slider);
+
+        }
+
+        // Set up elements for carousel content width
+        let slideElements = slider.querySelectorAll('.slider__slide');
+        slider.style.width = (slides.length * 100) + '%';
+
+        carousel.prepend(nextButton);
+        carousel.prepend(prevButton);
+        document.body.prepend(carousel);
+
+      }
+
+      window.onload = load;
+
+    </script>
+  </body>
+</html>
