@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Carousel</title>
     <style media="screen">
+      body { margin: 0; }
       ul { margin: 0; padding: 0; }
       li { list-style-type: none; }
       .carousel{
@@ -11,6 +12,29 @@
         margin: auto;
         overflow: hidden;
         width: min-content;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 0.5em;
+        box-shadow:
+          -1px 1px 0 #ccc,
+          -2px 2px 0 #c9c9c9,
+          -3px 3px 0 #bbb,
+          -4px 4px 0 #b9b9b9,
+          -5px 5px 0 #aaa,
+          -6px 6px 1px rgba(0,0,0,.1),
+          -1px 1px 3px rgba(0,0,0,.3),
+          -3px 3px 5px rgba(0,0,0,.2),
+          -5px 5px 10px rgba(0,0,0,.25),
+          -10px 10px 10px rgba(0,0,0,.2),
+          -20px 20px 20px rgba(0,0,0,.15);
+      }
+      .carousel__container {
+        background-image:
+        linear-gradient(217deg, rgba(0,255,255,1), rgba(0,255,255, 0.0) 77%),
+          linear-gradient(127deg, rgba(255,0,255,1), rgba(255,0,255, 0.0) 77%),
+          linear-gradient(336deg, rgba(255,255,0,1), rgba(255,255,0, 0.0) 77%);
+        width: 100vw;
+        height: 100vh;
       }
       .carousel__button {
         position: absolute;
@@ -20,25 +44,34 @@
         border: none;
         background: transparent;
         color: white;
-        font-size: 4em;
-        border-radius: 1em;
-        line-height: 4;
+        font-size: 6em;
+        line-height: 6;
         transition: all 200ms ease-in-out;
       }
-      .carousel__button:focus,
-      .carousel__button:hover {
+      .carousel__button:focus {
         outline: none;
-        background: rgba(255,255,255,0.5);
+        background-color: rgba(255,255,255,0.5);
+      }
+      .carousel__button:hover {
+        background-color: rgba(255,255,255,0.5);
       }
       .carousel__button--prev {
         left: 0;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        border-radius: 0 12px 12px 0;
+      }
+      .carousel__button--prev:focus,
+      .carousel__button--prev:hover {
+        padding-left: 0.2em;
+        padding-right: 0.2em;
       }
       .carousel__button--next {
         right: 0;
         text-shadow: -2px 2px 4px rgba(0,0,0,0.5);
-        border-radius: 12px 0 0 12px;
+      }
+      .carousel__button--next:focus,
+      .carousel__button--next:hover {
+        padding-left: 0.2em;
+        padding-right: 0.2em;
       }
       .carousel__slider {
         left: 0;
@@ -47,6 +80,7 @@
       }
       .slider__slide{
         float: left;
+        max-height: 480px;
       }
     </style>
   </head>
@@ -56,7 +90,35 @@
       let current = 0; // set current slide to 0, the first one
       let slides = []; // stage slides array for cross functional use
 
-      // Slide Action
+      // Simulate input data from external source
+      const slidesData = [
+        {
+          imgUrl: 'https://picsum.photos/id/237/640/480',
+          alt: 'pretty picture of amazing',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'https://picsum.photos/id/238/640/480',
+          alt: 'an image of greatness',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'https://picsum.photos/id/239/640/480',
+          alt: 'picture of something great',
+          width: 640,
+          height: 480,
+        },
+        {
+          imgUrl: 'https://picsum.photos/id/240/640/480',
+          alt: 'portrait of pretty',
+          width: 640,
+          height: 480,
+        },
+      ];
+
+      // Slide Action - decide if prev/next and slide the slider accordingly
       const doSlide = (place) => {
           if (current < 0) {
             current = slides.length - 1;
@@ -66,42 +128,14 @@
           slider.style.left = -(current * 100) + '%';
       }
 
-      // Simulate input data from external source
-      const slidesData = [
-        {
-          imgUrl: 'http://lorempixel.com/640/480/abstract/1',
-          alt: 'alternative image text',
-          width: 640,
-          height: 480,
-        },
-        {
-          imgUrl: 'http://lorempixel.com/640/480/abstract/2',
-          alt: 'alternative image text',
-          width: 640,
-          height: 480,
-        },
-        {
-          imgUrl: 'http://lorempixel.com/640/480/abstract/3',
-          alt: 'alternative image text',
-          width: 640,
-          height: 480,
-        },
-        {
-          imgUrl: 'http://lorempixel.com/640/480/abstract/4',
-          alt: 'alternative image text',
-          width: 640,
-          height: 480,
-        },
-      ];
-
+      // load up a carousel
       const load = () => {
 
         // Build the control buttons (next)
         const nextButton = document.createElement('button');
           nextButton.classList.add('carousel__button','carousel__button--next');
           nextButton.setAttribute('id','next');
-
-          nextButton.innerHTML = '>';
+          nextButton.innerHTML = '&#8250;';
           nextButton.addEventListener('click', function(e) {
             current++;
             doSlide(current);
@@ -111,12 +145,16 @@
         const prevButton = document.createElement('button');
           prevButton.classList.add('carousel__button','carousel__button--prev');
           prevButton.setAttribute('id','prev');
-
-          prevButton.innerHTML = '<';
+          prevButton.innerHTML = '&#8249;';
           prevButton.addEventListener('click', function(e) {
             current--;
             doSlide(current);
           });
+
+        // Build carousel slides wrapper element
+        const carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel__container');
+          carouselContainer.setAttribute('id','carousel__container');
 
         // Build carousel slides wrapper element
         const carousel = document.createElement('div');
@@ -141,11 +179,8 @@
             img.setAttribute('src',slidesData[i].imgUrl);
 
           slides.push(slide);
-
           slide.append(img);
-
           slider.append(slide);
-
           carousel.append(slider);
 
         }
@@ -156,7 +191,8 @@
 
         carousel.prepend(nextButton);
         carousel.prepend(prevButton);
-        document.body.prepend(carousel);
+        carouselContainer.prepend(carousel);
+        document.body.prepend(carouselContainer);
 
       }
 
